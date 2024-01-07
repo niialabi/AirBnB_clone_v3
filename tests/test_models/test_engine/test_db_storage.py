@@ -14,6 +14,7 @@ from models.place import Place
 from models.review import Review
 from models.state import State
 from models.user import User
+from models import storage
 import json
 import os
 import pep8
@@ -40,8 +41,8 @@ class TestDBStorageDocs(unittest.TestCase):
     def test_pep8_conformance_test_db_storage(self):
         """Test tests/test_models/test_db_storage.py conforms to PEP8."""
         pep8s = pep8.StyleGuide(quiet=True)
-        result = pep8s.check_files(['tests/test_models/test_engine/\
-test_db_storage.py'])
+        result = pep8s.check_files(['tests/test_models/test_engine/'
+                                   'test_db_storage.py'])
         self.assertEqual(result.total_errors, 0,
                          "Found code style errors (and warnings).")
 
@@ -86,3 +87,30 @@ class TestFileStorage(unittest.TestCase):
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_save(self):
         """Test that save properly saves objects to file.json"""
+
+    def test_db_counter(self):
+        """Test count db storage"""
+        jsonData = {"name": "vatican light rainbows"}
+        state = State(**jsonData)
+        storage.new(state)
+        jsonData = {"name": "newyork", "state_id": state.id}
+        city = City(**jsonData)
+        storage.new(city)
+        storage.save()
+        res = storage.count()
+        self.assertEqual(
+            len(storage.all()),
+            res
+        )
+
+    def test_db_getter(self):
+        """Tests that obtains a db storage instance"""
+        jsonData = {"name": "powerrangers vatican HQ"}
+        instObj = State(**jsonData)
+        storage.new(instObj)
+        storage.save()
+        getInstObj = storage.get(State, instObj.id)
+        self.assertEqual(
+            getInstObj,
+            instObj
+        )
