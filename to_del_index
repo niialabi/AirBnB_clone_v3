@@ -1,0 +1,14 @@
+#!/usr/bin/python3
+from flask import Flask, jsonify
+from api.v1.views import app_views
+
+app = Flask(__name__)
+
+app.register_blueprint(app_views, url_prefix='/app')
+
+# Route for /status within the app_views blueprint
+@app_views.route('/status', methods=['GET'])
+def status():
+    """ returns jsonified status"""
+    return jsonify({"status": "OK"})
+
