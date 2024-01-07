@@ -67,6 +67,28 @@ test_db_storage.py'])
             self.assertTrue(len(func[1].__doc__) >= 1,
                             "{:s} method needs a docstring".format(func[0]))
 
+    def test_count_no_class(self):
+        """Test count method when no class is passed"""
+        count_before = models.storage.count()
+        obj = Amenity(name="TestAmenity")
+        obj.save()
+        count_after = models.storage.count()
+        self.assertEqual(count_after, count_before + 1)
+
+    def test_count_with_class(self):
+        """Test count method with a specific class"""
+        count_before = models.storage.count(Amenity)
+        obj = Amenity(name="TestAmenity")
+        obj.save()
+        count_after = models.storage.count(Amenity)
+        self.assertEqual(count_after, count_before + 1)
+
+    def test_close(self):
+        """Test close method"""
+        models.storage.close()
+        with self.assertRaises(AttributeError):
+            models.storage._DBStorage__session.query(State).all()
+
 
 class TestFileStorage(unittest.TestCase):
     """Test the FileStorage class"""

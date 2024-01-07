@@ -113,3 +113,35 @@ class TestFileStorage(unittest.TestCase):
         with open("file.json", "r") as f:
             js = f.read()
         self.assertEqual(json.loads(string), json.loads(js))
+
+    def test_get_existing_object(self):
+        """Test get method with an existing object"""
+        storage = FileStorage()
+        obj = City()
+        obj.save()
+        retrieved_obj = storage.get(City, obj.id)
+        self.assertEqual(retrieved_obj, obj)
+
+    def test_get_non_existing_object(self):
+        """Test get method with a non-existing object"""
+        storage = FileStorage()
+        retrieved_obj = storage.get(City, "nonexistent_id")
+        self.assertIsNone(retrieved_obj)
+
+    def test_count_no_class(self):
+        """Test count method when no class is passed"""
+        storage = FileStorage()
+        count_before = storage.count()
+        obj = Amenity(name="TestAmenity")
+        obj.save()
+        count_after = storage.count()
+        self.assertEqual(count_after, count_before + 1)
+
+    def test_count_with_class(self):
+        """Test count method with a specific class"""
+        storage = FileStorage()
+        count_before = storage.count(Amenity)
+        obj = Amenity(name="TestAmenity")
+        obj.save()
+        count_after = storage.count(Amenity)
+        self.assertEqual(count_after, count_before + 1)
