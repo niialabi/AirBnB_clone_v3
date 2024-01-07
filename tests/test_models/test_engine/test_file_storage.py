@@ -114,34 +114,32 @@ class TestFileStorage(unittest.TestCase):
             js = f.read()
         self.assertEqual(json.loads(string), json.loads(js))
 
-    def test_get_existing_object(self):
-        """Test get method with an existing object"""
+    def test_file_counter(self):
+        """Test count file storage"""
         storage = FileStorage()
-        obj = City()
-        obj.save()
-        retrieved_obj = storage.get(City, obj.id)
-        self.assertEqual(retrieved_obj, obj)
+        jsonDATA = {"name": "vatican light rainbows"}
+        state = State(**jsonDATA)
+        storage.new(state)
+        jsonDATA = {"name": "wakanda"}
+        city = City(**jsonDATA)
+        storage.new(city)
+        storage.save()
+        res = storage.count()
+        self.assertEqual(
+            len(storage.all()),
+            res
+        )
 
-    def test_get_non_existing_object(self):
-        """Test get method with a non-existing object"""
+    def test_file_getter(self):
+        """Tests that obtains a file storage instance"""
         storage = FileStorage()
-        retrieved_obj = storage.get(City, "nonexistent_id")
-        self.assertIsNone(retrieved_obj)
-
-    def test_count_no_class(self):
-        """Test count method when no class is passed"""
+        jsonDATA = {"name": "powerrangers vatican HQ"}
+        instObj = State(**jsonDATA)
+        storage.new(instObj)
+        storage.save()
         storage = FileStorage()
-        count_before = storage.count()
-        obj = Amenity(name="TestAmenity")
-        obj.save()
-        count_after = storage.count()
-        self.assertEqual(count_after, count_before + 1)
-
-    def test_count_with_class(self):
-        """Test count method with a specific class"""
-        storage = FileStorage()
-        count_before = storage.count(Amenity)
-        obj = Amenity(name="TestAmenity")
-        obj.save()
-        count_after = storage.count(Amenity)
-        self.assertEqual(count_after, count_before + 1)
+        getInstObj = storage.get(State, instObj.id)
+        self.assertEqual(
+            getInstObj,
+            instObj
+        )

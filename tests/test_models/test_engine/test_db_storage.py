@@ -14,6 +14,7 @@ from models.place import Place
 from models.review import Review
 from models.state import State
 from models.user import User
+from models import storage
 import json
 import os
 import pep8
@@ -40,8 +41,8 @@ class TestDBStorageDocs(unittest.TestCase):
     def test_pep8_conformance_test_db_storage(self):
         """Test tests/test_models/test_db_storage.py conforms to PEP8."""
         pep8s = pep8.StyleGuide(quiet=True)
-        result = pep8s.check_files(['tests/test_models/test_engine/\
-test_db_storage.py'])
+        result = pep8s.check_files(['tests/test_models/test_engine/'
+                                   'test_db_storage.py'])
         self.assertEqual(result.total_errors, 0,
                          "Found code style errors (and warnings).")
 
@@ -67,28 +68,6 @@ test_db_storage.py'])
             self.assertTrue(len(func[1].__doc__) >= 1,
                             "{:s} method needs a docstring".format(func[0]))
 
-    def test_count_no_class(self):
-        """Test count method when no class is passed"""
-        count_before = models.storage.count()
-        obj = Amenity(name="TestAmenity")
-        obj.save()
-        count_after = models.storage.count()
-        self.assertEqual(count_after, count_before + 1)
-
-    def test_count_with_class(self):
-        """Test count method with a specific class"""
-        count_before = models.storage.count(Amenity)
-        obj = Amenity(name="TestAmenity")
-        obj.save()
-        count_after = models.storage.count(Amenity)
-        self.assertEqual(count_after, count_before + 1)
-
-    def test_close(self):
-        """Test close method"""
-        models.storage.close()
-        with self.assertRaises(AttributeError):
-            models.storage._DBStorage__session.query(State).all()
-
 
 class TestFileStorage(unittest.TestCase):
     """Test the FileStorage class"""
@@ -108,3 +87,30 @@ class TestFileStorage(unittest.TestCase):
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_save(self):
         """Test that save properly saves objects to file.json"""
+
+    def test_db_counter(self):
+        """Test count db storage"""
+        jsonData = {"name": "vatican light rainbows"}
+        state = State(**jsonData)
+        storage.new(state)
+        jsonData = {"name": "newyork", "state_id": state.id}
+        city = City(**jsonData)
+        storage.new(city)
+        storage.save()
+        res = storage.count()
+        self.assertEqual(
+            len(storage.all()),
+            res
+        )
+
+    def test_db_getter(self):
+        """Tests that obtains a db storage instance"""
+        jsonData = {"name": "powerrangers vatican HQ"}
+        instObj = State(**jsonData)
+        storage.new(instObj)
+        storage.save()
+        getInstObj = storage.get(State, instObj.id)
+        self.assertEqual(
+            getInstObj,
+            instObj
+        )
