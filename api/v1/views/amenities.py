@@ -32,6 +32,7 @@ def del_amenity(amenity_id):
     storage.save()
     return jsonify({}), 200
 
+
 @app_views.route('/amenities', methods=['POST'])
 def post_amenity():
     """ Creates a Amenity object """
