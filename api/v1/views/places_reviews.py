@@ -79,7 +79,7 @@ def create_review(id_place):
 
 @app_views.route("/reviews/<id>", methods=["PUT"])
 def put_review(id):
-    """update a reviews by id"""
+    """ update reviews<id> """
     not_json = "Not a JSON"
     review = storage.get(Review, id)
     ignoreKeys = ["id", "user_id", "place_id", "created_at", "updated_at"]
