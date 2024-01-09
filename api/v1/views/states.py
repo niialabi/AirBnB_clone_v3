@@ -78,7 +78,7 @@ def put_state(id):
         if key not in key_exeption:
             setattr(state, key, value)
     storage.save()
-    out = state.to_dict()
+    out = State.to_dict()
     output = make_response(json.dumps(out), 200)
     output.headers["Content-Type"] = "application/json"
     return output
