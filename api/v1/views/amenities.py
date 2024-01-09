@@ -2,12 +2,12 @@
 """ states api """
 from api.v1.views import app_views
 from models import storage
-from models.Amenity import Amenities
+from models.amenity import Amenity
 from flask import abort, make_response, request
 import json
 
 
-@app_views.route('/Amenties', methods=['GET'])
+@app_views.route('/amenties', methods=['GET'])
 def get_amenities():
     """ Retrieves the list of all amenities objects """
     all_amenities = storage.all(Amenity).values()
@@ -19,10 +19,10 @@ def get_amenities():
     return output
 
 
-@app_views.route('/Amenities/<id>', methods=['GET'])
+@app_views.route('/amenities/<id>', methods=['GET'])
 def get_amenity_id(id):
     """ Retrieves a specific amenities object by ID. """
-    amenity_id = storage.get(Amenities, id)
+    amenity_id = storage.get(Amenity, id)
     if not amenity_id:
         abort(404)
     amenity_dict = amenity_id.to_dict()
@@ -31,7 +31,7 @@ def get_amenity_id(id):
     return output
 
 
-@app_views.route("/Amenities/<id>", methods=["DELETE"])
+@app_views.route("/amenities/<id>", methods=["DELETE"])
 def delete_amenities(id):
     """ deletes amenities <id> """
     amenity_to_del = storage.get(Amenity, id)
@@ -45,7 +45,7 @@ def delete_amenities(id):
     return output
 
 
-@app_views.route("/Amenities", methods=["POST"])
+@app_views.route("/amenities", methods=["POST"])
 def create_amenities():
     """ Inserts amenities if valid json with has correct key """
     not_json = "Not a JSON"
@@ -66,7 +66,7 @@ def create_amenities():
 def put_amenities(id):
     """update a amenity by id"""
     not_json = "Not a JSON"
-    amenity = storage.get(Amenities, id)
+    amenity = storage.get(Amenity, id)
     key_exeption = ["id", "created_at", "updated_at"]
     if not amenity:
         abort(404)
