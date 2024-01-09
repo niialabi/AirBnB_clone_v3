@@ -54,14 +54,14 @@ def delete_place(id):
 def post_place(id):
     """ inserts place <id> """
     missing_name = "Missing name"
-    userMissingMsg = "Missing user_id"
+    user_msg = "Missing user_id"
     city = storage.get(City, id)
     if not city:
         abort(404)
     if not request.get_json():
         abort(400, description="Not a JSON")
     if "user_id" not in request.get_json():
-        abort(400, description=userMissingMsg)
+        abort(400, description=user_msg)
     data = request.get_json()
     user = storage.get(User, data["user_id"])
     if not user:
